@@ -100,6 +100,12 @@ License: For each use you must have a valid license purchased only from above li
               <span class="link-title">Liste des demandes</span>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="<?php echo site_url("index.php/back_office/ProformaReceivedController/proforma") ?>" class="nav-link">
+              <i class="link-icon" data-feather="key"></i>
+              <span class="link-title">Liste des proformas </span>
+            </a>
+          </li>
         </ul>
       </div>
     </nav>
