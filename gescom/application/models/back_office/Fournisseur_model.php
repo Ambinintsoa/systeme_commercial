@@ -8,7 +8,6 @@ class Fournisseur_model extends CI_Model {
     }
 
     public function insert_fournisseur($data) {
-
         $this->db->insert('fournisseur', $data);
         return $this->db->insert_id();
     }
