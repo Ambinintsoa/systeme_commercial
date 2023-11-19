@@ -61,7 +61,15 @@ class Besoin extends CI_Model {
 
         $this->db->insert('detailbesoin', $data);
     }
+    // AJOUTER UN MATERIEL DANS UN BESOIN
+    public function updateDetailBesoin($id, $qty){
+        $data['qte'] = $qty;
 
+        $this->db->update('detailbesoin', $data, array('iddetail' => $id));
+    }
+    public function deleteDetailBesoin($id){
+        $this->db->delete('detailbesoin', array('iddetail' => $id));
+    }
     // LISTE DES MATERIELS POUR UN BESOIN SPECIFIC
     public function getBesoinDetail($idBesoin){
         $this->db->select('*');
