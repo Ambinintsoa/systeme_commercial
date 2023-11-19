@@ -262,3 +262,79 @@ VALUES
   ('kg'),
   ('litre'),
   ('unity');
+
+
+
+
+
+------------------------------------------------------VIEW ZO-----------------------------------------------------------------------
+CREATE VIEW v_besoin_detail AS
+SELECT
+    b.idbesoin,
+    b.date,
+    b.iddepartement,
+    b.situation,
+    b.idemployee,
+    d.iddetail,
+    d.idmateriel,
+    d.qte
+FROM
+    public.besoin b
+JOIN
+    public.detailbesoin d ON b.idbesoin = d.idbesoin;
+
+
+CREATE VIEW v_global_detail AS
+SELECT
+    g.idglobal,
+    g.idemployee,
+    g.date AS global_date,
+    dg.iddetailglobal,
+    dg.idbesoin
+FROM
+    public.global g
+JOIN public.detailglobal dg ON g.idglobal = dg.idglobal;
+
+CREATE VIEW v_global_besoin AS
+SELECT
+    gb.idglobal,
+    gb.idemployee AS global_idemployee,
+    gb.global_date,
+    gb.iddetailglobal,
+    gb.idbesoin AS global_idbesoin,
+    bd.idbesoin,
+    bd.date AS besoin_date,
+    bd.iddepartement,
+    bd.situation,
+    bd.idemployee AS besoin_idemployee,
+    bd.iddetail,
+    bd.idmateriel,
+    bd.qte
+	m.nommateriel,
+    m.idnature,
+    m.idunite,
+    m.tva
+FROM
+    v_global_detail gb
+JOIN
+    v_besoin_detail bd ON gb.idbesoin = bd.idbesoin,
+	materiel m ON bd.idmateriel = m.idmateriel;
+
+
+CREATE VIEW v_proforma_detail AS
+SELECT
+    p.idproforma,
+    p.idfournisseur,
+    p.dateproformasent,
+    p.dateproformareceived,
+    p.idglobal,
+    f.nomfournisseur,
+    f.adresse,
+    f.contact,
+    f.responsable,
+    f.email
+FROM
+    proforma p
+JOIN
+    fournisseur f ON p.idfournisseur = f.idfournisseur;
+----------------------------------------------------------------------------------------------------------------------------------------------------------
