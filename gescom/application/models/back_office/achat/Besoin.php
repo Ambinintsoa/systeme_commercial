@@ -5,7 +5,6 @@ class Besoin extends CI_Model {
 
     public function __construct() {
         parent::__construct();
-        $this->load->library('session');
     }
 
     // PRENDRE LA LISTE DE TOUS LES DEMANDES DEJA FAIT
@@ -29,7 +28,7 @@ class Besoin extends CI_Model {
 
     // PRENDRE LE STATUS D'UN BESOIN
     public function my_status($situation){
-        $donnes = array("Attente validation chef", "Valide par chef", "Proforma envoye", "Bon Commande Envoye");
+        $donnes = array("Attente validation chef", "Valide par chef departement", "Grouper en Besoin Global", "Proforma cree", "Proforma envoye", "Proforma recu", "Bon Commande Envoye");
         $progress = (($situation + 1) / count($donnes)) * 100;
         $result = array();
         $result[] = $donnes[$situation];
@@ -61,15 +60,7 @@ class Besoin extends CI_Model {
 
         $this->db->insert('detailbesoin', $data);
     }
-    // AJOUTER UN MATERIEL DANS UN BESOIN
-    public function updateDetailBesoin($id, $qty){
-        $data['qte'] = $qty;
 
-        $this->db->update('detailbesoin', $data, array('iddetail' => $id));
-    }
-    public function deleteDetailBesoin($id){
-        $this->db->delete('detailbesoin', array('iddetail' => $id));
-    }
     // LISTE DES MATERIELS POUR UN BESOIN SPECIFIC
     public function getBesoinDetail($idBesoin){
         $this->db->select('*');
@@ -115,5 +106,13 @@ class Besoin extends CI_Model {
         $this->db->trans_complete(); // Complete the transaction
     }
 
+    // AJOUTER UN MATERIEL DANS UN BESOIN
+    public function updateDetailBesoin($id, $qty){
+        $data['qte'] = $qty;
 
+        $this->db->update('detailbesoin', $data, array('iddetail' => $id));
+    }
+    public function deleteDetailBesoin($id){
+        $this->db->delete('detailbesoin', array('iddetail' => $id));
+    }
 }

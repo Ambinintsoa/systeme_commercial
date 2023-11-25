@@ -11,6 +11,7 @@ class BesoinController extends BaseSessionController {
 
     // LISTE DES BESOINS
     public function getBesoinsCtrl(){
+        $this -> Besoin -> deleteUnsavedBesoin();
         $user = $this->session->userdata('user_data');
 
         $data['besoins'] = $this -> Besoin -> besoins($user['iddepartement']);
@@ -24,18 +25,6 @@ class BesoinController extends BaseSessionController {
         $this -> Besoin -> saveBesoin($idbesoin);
         redirect(base_url().'back_office/BesoinController/getBesoinsCtrl');
     }
-        // VALIDATION CHEF UN BESOIN
-        public function validBesoinCtrl(){
-            $idbesoin = $this->input->post('idbesoin');
-            $this -> Besoin -> updateBesoinStatus($idbesoin, 1);
-            redirect(base_url().'back_office/BesoinController/getBesoinsCtrl');
-        }
-        // VALIDATION CHEF UN BESOIN
-        public function unvalidBesoinCtrl(){
-            $idbesoin = $this->input->post('idbesoin');
-            $this -> Besoin -> updateBesoinStatus($idbesoin, 0);
-            redirect(base_url().'back_office/BesoinController/getBesoinsCtrl');
-        }
 
     // CREER EN PREMIER UN BESOIN
 	public function createBesoinCtrl(){
@@ -68,16 +57,32 @@ class BesoinController extends BaseSessionController {
         $this -> Besoin -> addDetailBesoin($idbesoin, $idmaterial, $qty);
         redirect(base_url().'back_office/BesoinController/listeDetailBesoinCtrl/'.$idbesoin);
     }
-        // AJOUTER UN MATERIEL DANS UN BESOIN
-        public function addDetailBesoinDCCtrl(){
-            $idbesoin = $this->input->post('idbesoin');
-            $status = $this->input->post('status');
-            $idmaterial = $this->input->post('idmateriel');
-            $qty = $this->input->post('quantite');
-    
-            $this -> Besoin -> addDetailBesoin($idbesoin, $idmaterial, $qty);
-            redirect(base_url().'back_office/BesoinController/listeDetailCtrl/'.$status.'/'.$idbesoin);
-        }
+
+    // VALIDATION CHEF UN BESOIN
+    public function validBesoinCtrl(){
+        $idbesoin = $this->input->post('idbesoin');
+        $this -> Besoin -> updateBesoinStatus($idbesoin, 1);
+        redirect(base_url().'back_office/BesoinController/getBesoinsCtrl');
+    }
+    // VALIDATION CHEF UN BESOIN
+    public function unvalidBesoinCtrl(){
+        $idbesoin = $this->input->post('idbesoin');
+        $this -> Besoin -> updateBesoinStatus($idbesoin, 0);
+        redirect(base_url().'back_office/BesoinController/getBesoinsCtrl');
+    }
+
+    // AJOUTER UN MATERIEL DANS UN BESOIN
+    public function addDetailBesoinDCCtrl(){
+        $idbesoin = $this->input->post('idbesoin');
+        $status = $this->input->post('status');
+        $idmaterial = $this->input->post('idmateriel');
+        $qty = $this->input->post('quantite');
+
+        $this -> Besoin -> addDetailBesoin($idbesoin, $idmaterial, $qty);
+        redirect(base_url().'back_office/BesoinController/listeDetailCtrl/'.$status.'/'.$idbesoin);
+    }
+
+    // UPDATING
     public function updateDetailBesoinCtrl(){
         $idbesoin = $this->input->post('idbesoin');
         $status = $this->input->post('status');
@@ -86,10 +91,14 @@ class BesoinController extends BaseSessionController {
         $this -> Besoin -> updateDetailBesoin($id, $qty);
         redirect(base_url().'back_office/BesoinController/listeDetailCtrl/'.$status.'/'.$idbesoin);
     }
+
+    // DELETING
     public function deleteDetailBesoinCtrl($status,$idbesoin ,$id){
         $this -> Besoin -> deleteDetailBesoin($id);
         redirect(base_url().'back_office/BesoinController/listeDetailCtrl/'.$status.'/'.$idbesoin);
     }
+
+    // UPDATE 
     public function updateDetailBesoinCCtrl(){
         $idbesoin = $this->input->post('idbesoin');
         $status = $this->input->post('status');
@@ -98,18 +107,22 @@ class BesoinController extends BaseSessionController {
         $this -> Besoin -> updateDetailBesoin($id, $qty);
         redirect(base_url().'back_office/BesoinController/listeDetailBesoinCtrl/'.$idbesoin);
     }
+
+
     public function deleteDetailBesoinCCtrl($idbesoin,$id){
         $this -> Besoin -> deleteDetailBesoin($id);
         redirect(base_url().'back_office/BesoinController/listeDetailBesoinCtrl/'.$idbesoin);
     }
-        // LISTE DES MATERIELS POUR UN BESOIN SPECIFIC
-        public function listeDetailCtrl($status,$idbesoin){
-            $data['detail_besoins'] = $this -> Besoin -> getBesoinDetail($idbesoin);
-            $data['content'] = 'back_office/achat/detail_besoin';
-            $data['materiels'] = $this -> Materiel -> materiels();
-            $data['idbesoin'] = $idbesoin;
-            $data['status'] = $status;
-            $this->load->view('back_office/main',$data);
-        }
+
+
+    // LISTE DES MATERIELS POUR UN BESOIN SPECIFIC
+    public function listeDetailCtrl($status, $idbesoin){
+        $data['detail_besoins'] = $this -> Besoin -> getBesoinDetail($idbesoin);
+        $data['content'] = 'back_office/achat/detail_besoin';
+        $data['materiels'] = $this -> Materiel -> materiels();
+        $data['idbesoin'] = $idbesoin;
+        $data['status'] = $status;
+        $this->load->view('back_office/main',$data);
+    }
 
 }

@@ -42,7 +42,7 @@
                             </div>
                         </td>
                         <td> <?php echo $besoin['nom'] .' '. $besoin['prenom'] ?> </td>
-                        <td class="text-center text-muted" style="width: 5%"> <a href="<?php echo site_url("index.php/back_office/BesoinController/listeDetailCtrl") ?>/<?php  echo$besoin['status'][1] ; ?>/<?php echo $besoin['idbesoin']; ?>"><i data-feather="eye"></a></i></td>
+                        <td class="text-center text-muted" style="width: 5%"> <a href="<?php echo site_url("index.php/back_office/BesoinController/listeDetailCtrl") ?>/<?php  echo $besoin['situation']; ?>/<?php echo $besoin['idbesoin']; ?>"><i data-feather="eye"></a></i></td>
                       </tr>
                     <?php } ?>
                     

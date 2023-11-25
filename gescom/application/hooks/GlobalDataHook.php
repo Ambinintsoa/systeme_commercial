@@ -16,6 +16,7 @@ class GlobalDataHook
     {
         $CI =& get_instance();      
         $data['user_session'] = $CI->session->userdata('user_data');
+        $data['dep_achat_id'] = $CI->session->userdata('dep_achat');
         $CI->load->vars($data);
     }
 }
