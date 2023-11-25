@@ -77,7 +77,7 @@ $db['default'] = array(
 	'dsn'	=> 'pgsql:host=localhost;port=5432;dbname=gescom',
 	'hostname' => 'localhost',
 	'username' => 'postgres',
-	'password' => 'root',
+	'password' => 'mdpProm15',
 	'database' => 'gescom',
 	'dbdriver' => 'pdo',
 	'dbprefix' => '',

@@ -1,3 +1,10 @@
+
+<?php 
+    $user = $this->session->userdata('user_data');
+    $departement_achat = $this->session->userdata('dep_achat');
+    $departement_finance = $this->session->userdata('dep_finance');
+?>
+
 <!DOCTYPE html>
 <!--
 Template Name: NobleUI - HTML Bootstrap 5 Admin Dashboard Template
@@ -86,6 +93,71 @@ License: For each use you must have a valid license purchased only from above li
               <span class="link-title">Agenda</span>
             </a>
           </li>
+        <?php 
+        if($user['iddepartement'] == $departement_achat || $user['privilege'] == 2){  ?>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#advancedUI" role="button" aria-expanded="false" aria-controls="advancedUI">
+              <i class="link-icon" data-feather="anchor"></i>
+              <span class="link-title"> Service Achat </span>
+              <i class="link-arrow" data-feather="chevron-down"></i>
+            </a>
+            <div class="collapse" id="advancedUI">
+              <ul class="nav sub-menu">
+                <li class="nav-item">
+                  <a href="<?php echo site_url("index.php/back_office/dep_achat/BesoinController/getAllBesoinsCtrl") ?>" class="nav-link">Ensemble besoins</a>
+                </li>
+                <li class="nav-item">
+                  <a href="<?php echo site_url("index.php/back_office/dep_achat/BesoinController/getBesoinGlobalCtrl") ?>" class="nav-link">Besoins globaux</a>
+                </li>
+                <li class="nav-item">
+                  <a href="<?php echo site_url("index.php/back_office/ProformaReceivedController/proforma") ?>" class="nav-link">
+                    Liste des proformas
+                  </a>
+                </li>
+                <?php if($user['privilege'] == 2){ ?>
+
+                  <li class="nav-item">
+                      <a href="<?php echo site_url("index.php/back_office/BandcommandeController/getBandCommande") ?>" class="nav-link">
+                        B.C en attente Validation
+                      </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="<?php echo site_url("index.php/back_office/BandcommandeController/commandes") ?>" class="nav-link">
+                          B.C en attente envoie 
+                        </a>
+                      </li>
+                  <?php } else{ ?>
+                    <li class="nav-item">
+                      <a href="<?php echo site_url("index.php/back_office/BandcommandeController/commandes") ?>" class="nav-link">
+                        B.C en attente envoie 
+                      </a>
+                    </li>
+                  <?php } ?>
+              </ul>
+            </div>
+          </li>
+        <?php } ?>
+
+        <?php 
+        if($user['iddepartement'] == $departement_finance){ ?>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#advancedUI" role="button" aria-expanded="false" aria-controls="advancedUI">
+              <i class="link-icon" data-feather="credit-card"></i>
+              <span class="link-title"> Service Finance </span>
+              <i class="link-arrow" data-feather="chevron-down"></i>
+            </a>
+            <div class="collapse" id="advancedUI">
+              <ul class="nav sub-menu">
+                <li class="nav-item">
+                    <a href="<?php echo site_url("index.php/back_office/BandcommandeController/getBandCommandeFinance") ?>" class="nav-link">
+                      B.C en attente validation
+                    </a>
+                  </li>
+              </ul>
+            </div>
+          </li>
+        <?php } ?>
+
           <li class="nav-item nav-category">BESOIN ACHAT</li>
           <li class="nav-item">
             <a data-bs-toggle="modal" data-bs-target="#addAchat" class="nav-link">
@@ -98,12 +170,6 @@ License: For each use you must have a valid license purchased only from above li
             <a href="<?php echo site_url("index.php/back_office/BesoinController/getBesoinsCtrl") ?>" class="nav-link">
               <i class="link-icon" data-feather="map"></i>
               <span class="link-title">Liste des demandes</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="<?php echo site_url("index.php/back_office/ProformaReceivedController/proforma") ?>" class="nav-link">
-              <i class="link-icon" data-feather="key"></i>
-              <span class="link-title">Liste des proformas </span>
             </a>
           </li>
         </ul>

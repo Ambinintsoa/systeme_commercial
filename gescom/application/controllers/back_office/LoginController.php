@@ -21,6 +21,10 @@ class LoginController extends CI_Controller {
 			// var_dump($user);
             if ($user) {
 				$this->session->set_userdata('user_data', $user);
+                $achat = "DEP3";
+                $finance = "DEP4";
+                $this->session->set_userdata('dep_achat', $achat);
+                $this->session->set_userdata('dep_finance', $finance);
                 redirect('back_office/HomeController');
             } else {
                 redirect('back_office/LoginController');

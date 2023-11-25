@@ -6,7 +6,7 @@
                             <div class="card-body">
                                 <h6 class="card-title">Demande Proforma</h6>
 
-                                <form class="forms-sample" action="facture" method="POST">
+                                <form class="forms-sample" action="insertProforma" method="POST">
                                     <div class="mb-3">
                                       <label class="form-label">Fournisseur</label>
                                       <select class="form-select form-select-sm mb-3" name="fou">

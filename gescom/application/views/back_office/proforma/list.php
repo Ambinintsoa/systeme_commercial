@@ -1,5 +1,14 @@
 
 <div class="page-content">
+        <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
+          <div>
+            <h4 class="mb-3 mb-md-0">Liste Demande</h4>
+          </div>
+          <div class="d-flex align-items-center flex-wrap text-nowrap">
+            <a href="ProformaController/adddemandeproforma"><button type="button" class="btn btn-primary btn-icon-text mb-2 mb-md-0">+ Demande proforma</button></a>
+          </div>
+        </div>
+
         <div class="row">
             <div class="col-md-12 grid-margin stretch-card" style="margin:auto">
                 <div class="card">
@@ -26,7 +35,7 @@
                                         <td><?php echo $p["dateproformasent"];?></td>
                                         <td><?php echo $p["dateproformareceived"];?></td>
                                         <td>
-                                            <a href="demande/<?php echo $p["idproforma"];?>" >Details</a>
+                                            <a href="ProformaController/demande/<?php echo $p["idproforma"];?>" >Details</a>
                                         </td>
                                     </tr>
                                     <?php } ?>   

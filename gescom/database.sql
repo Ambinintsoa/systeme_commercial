@@ -23,6 +23,10 @@ CREATE SEQUENCE "public".seq_poste START WITH 1 INCREMENT BY 1;
 
 CREATE SEQUENCE "public".seq_proforma START WITH 1 INCREMENT BY 1;
 
+CREATE SEQUENCE "public".seq_global START WITH 1 INCREMENT BY 1;
+
+CREATE SEQUENCE "public".seq_detail_global START WITH 1 INCREMENT BY 1;
+
 CREATE  TABLE "public".departement ( 
 	iddepartement        varchar(70) DEFAULT ('DEP'::text || nextval('seq_departement'::regclass)) NOT NULL  ,
 	nomdepartement       varchar(70)    ,
@@ -211,7 +215,8 @@ VALUES
 VALUES 
   ( 'Informatique'),
   ( 'RH'),
-( 'Achat & vente');
+( 'Achat & vente'),
+('Finance');
 
 
 -- Ajouter des données à la table poste
@@ -223,7 +228,8 @@ VALUES
   ( 'Responsable RH', 'DEP2', NULL, 1),
   ('Assistant RH', 'DEP2', 'POS4', 0),
   ( 'Responsable Achat&vente', 'DEP3', NULL, 1),
-     ( 'Comptable', 'DEP3', 'POS6', 0);
+     ( 'Comptable', 'DEP3', 'POS6', 0),
+	 ( 'Directeur Finance', 'DEP4', NULL, 1);
 
 -- Ajouter 10 données à la table materiel sans spécifier l'ID
 INSERT INTO "public".materiel (nommateriel, idnature,idunite)
@@ -249,7 +255,8 @@ VALUES
   ('Brown', 'Alice', '1988-09-10', 0, 'alice.brown@example.com', 'motdepasse4', '111-222-3333', 'POS4'),
   ('Williams', 'Chris', '1995-12-25', 1, 'chris.williams@example.com', 'motdepasse5', '444-555-6666', 'POS5'),
   ('Davis', 'Emily', '1980-06-30', 0, 'emily.davis@example.com', 'motdepasse6', '777-888-9999', 'POS6'),
-  ('Miller', 'Michael', '1998-04-12', 1, 'michael.miller@example.com', 'motdepasse7', '000-111-2222', 'POS7');
+  ('Miller', 'Michael', '1998-04-12', 1, 'michael.miller@example.com', 'motdepasse7', '000-111-2222', 'POS7'),
+  ('Jayson', 'Tatum', '1998-04-15', 1, 'jayson@example.com', 'motdepasse8', '123-476-7890', 'POS8');
 
 INSERT INTO "public".modepaiement (nommodepaiement)
 VALUES 
@@ -294,3 +301,233 @@ select besoin.idbesoin, besoin.date, departement.*, employee.nom, employee.preno
 from besoin
 inner join employee on employee.idemployee = besoin.idemployee
 inner join departement on departement.iddepartement = besoin.iddepartement);
+
+-- ----------------------------------------------------------------
+
+create or replace view v_global_general as(
+	select global.idglobal, global.date, employee.nom, employee.prenom, global.status
+	from global
+	inner join employee on employee.idemployee = global.idemployee
+)
+
+-- -------------------------------------------------------------
+-- select v_materiel_detail.*, t1.total
+-- from
+-- (select t.idmateriel, sum(qte) as total
+-- from (select v_besoin_detail.*, detailglobal.idglobal
+-- from detailglobal
+-- inner join v_besoin_detail on v_besoin_detail.idbesoin = detailglobal.idbesoin
+-- where detailglobal.idglobal = 'GLO_26') as t
+-- group by t.idmateriel) as t1
+-- inner join v_materiel_detail on v_materiel_detail.idmateriel = t1.idmateriel
+
+-- ------------------------------------------------------------------------
+
+-- select t.idnature
+-- from (select v_besoin_detail.*, detailglobal.idglobal
+-- from detailglobal
+-- inner join v_besoin_detail on v_besoin_detail.idbesoin = detailglobal.idbesoin
+-- where detailglobal.idglobal = 'GLO_5') as t
+-- group by t.idnature
+
+-- -------------------------------------------------------------------
+insert into fournisseur_nature values('FN1', 'FOU1', 'NAT1');
+insert into fournisseur_nature values('FN2', 'FOU2', 'NAT2');
+insert into fournisseur_nature values('FN3', 'FOU3', 'NAT1');
+insert into fournisseur_nature values('FN4', 'FOU3', 'NAT2');
+
+-- -------------------------------------------------------------------
+
+
+delete from detailcommande;
+delete from boncommande;
+delete from detailproforma;
+delete from proforma;
+delete from detailglobal;
+delete from global;
+delete from detailbesoin;
+delete from besoin;
+
+	update besoin set situation = 1 where situation != 0;
+
+-- ----------------------other------------------------------------------
+
+create or replace view v_proforma_detail as(
+	select detailproforma.qte, proforma.dateproformasent, proforma.idproforma, fournisseur.*, v_materiel_detail.*, proforma.idglobal
+	from detailproforma
+	inner join proforma on proforma.idproforma = detailproforma.idproforma
+	inner join v_materiel_detail on v_materiel_detail.idmateriel = detailproforma.idmateriel
+	inner join fournisseur on fournisseur.idfournisseur = proforma.idfournisseur
+);
+
+-- ------------------------------------------------------------------
+
+
+create OR REPLACE  view v_proformadetail as(
+	select proforma.idfournisseur,proforma.dateproformasent,proforma.dateproformareceived,proforma.idglobal,proforma.status,detailproforma.*,
+	v_materiel_detail.nommateriel, v_materiel_detail.tva, v_materiel_detail.nomunite, v_materiel_detail.idunite,  v_materiel_detail.idnature,  v_materiel_detail.nomnature
+	from detailproforma 
+	join v_materiel_detail on v_materiel_detail.idmateriel = detailproforma.idmateriel
+	join proforma on detailproforma.idproforma= proforma.idproforma
+);
+
+-- ---------------------------------------------------------
+
+create OR REPLACE  view v_proformacomplete as
+select v_proformadetail.* , fournisseur.nomfournisseur from v_proformadetail
+join fournisseur on v_proformadetail.idfournisseur= fournisseur.idfournisseur;
+
+-- --------------------------------------------
+
+alter table global add column status integer default 0;
+
+-- --------------------------------------------------
+
+create  OR REPLACE view v_globalcomplete as 
+select global.* , detailglobal.iddetailglobal,v_besoin_detail.*
+from detailglobal join global on global.idglobal= detailglobal.idglobal
+join v_besoin_detail on detailglobal.idbesoin = v_besoin_detail.idbesoin;
+
+-- ------------------------------------------------
+CREATE VIEW v_besoins_detail AS
+SELECT
+    b.idbesoin,
+    b.date,
+    b.iddepartement,
+    b.situation,
+    b.idemployee,
+    d.iddetail,
+    d.idmateriel,
+    d.qte
+FROM
+    public.besoin b
+JOIN
+    public.detailbesoin d ON b.idbesoin = d.idbesoin;
+
+-- ---------------------------------------------------------------
+
+CREATE VIEW v_globals_detail AS
+SELECT
+    g.idglobal,
+    g.idemployee,
+    g.date AS global_date,
+    dg.iddetailglobal,
+    dg.idbesoin
+FROM
+    public.global g
+JOIN public.detailglobal dg ON g.idglobal = dg.idglobal;
+
+-- ---------------------------------------------
+
+CREATE VIEW v_global_besoin AS
+SELECT
+    gb.idglobal,
+    gb.idemployee AS global_idemployee,
+    gb.global_date,
+    gb.iddetailglobal,
+    gb.idbesoin AS global_idbesoin,
+    bd.idbesoin,
+    bd.date AS besoin_date,
+    bd.iddepartement,
+    bd.situation,
+    bd.idemployee AS besoin_idemployee,
+    bd.iddetail,
+    bd.idmateriel,
+    bd.qte,
+	m.nommateriel,
+    nat.nomnature,
+    u.nomunite,
+    m.tva
+FROM
+    v_globals_detail gb
+JOIN
+    v_besoins_detail bd ON gb.idbesoin = bd.idbesoin
+JOIN
+	materiel m ON bd.idmateriel = m.idmateriel
+JOIN
+    nature nat ON m.idnature = nat.idnature
+JOIN
+    unite u ON m.idunite = u.idunite;
+
+-- ----------------------------------------
+
+CREATE VIEW v_global_besoin_2 AS
+SELECT
+    gb.idglobal,
+    gb.idemployee AS global_idemployee,
+    gb.global_date,
+    gb.iddetailglobal,
+    gb.idbesoin AS global_idbesoin,
+    bd.idbesoin,
+    bd.date AS besoin_date,
+    bd.iddepartement,
+    bd.situation,
+    bd.idemployee AS besoin_idemployee,
+    bd.iddetail,
+    bd.idmateriel,
+    bd.qte,
+	m.nommateriel,
+    nat.nomnature,
+    u.nomunite,
+    m.tva,
+	pf.idproforma
+FROM
+    v_globals_detail gb
+JOIN
+    v_besoins_detail bd ON gb.idbesoin = bd.idbesoin
+JOIN
+	v_proformas_detail pf ON gb.idglobal = pf.idglobal
+JOIN
+	materiel m ON bd.idmateriel = m.idmateriel
+JOIN
+    nature nat ON m.idnature = nat.idnature
+JOIN
+    unite u ON m.idunite = u.idunite;
+
+	-- --------------------------------------
+
+CREATE VIEW v_proformas_detail AS
+SELECT
+    p.idproforma,
+    p.idfournisseur,
+    p.dateproformasent,
+    p.dateproformareceived,
+    p.idglobal,
+    f.nomfournisseur,
+    f.adresse,
+    f.contact,
+    f.responsable,
+    f.email
+FROM
+    proforma p
+JOIN
+    fournisseur f ON p.idfournisseur = f.idfournisseur;
+
+
+-- ----------------------------------------------
+
+alter table boncommande add column idfournisseur varchar;
+ALTER TABLE boncommande
+ADD CONSTRAINT fk_fournisseur
+FOREIGN KEY (idfournisseur) 
+REFERENCES fournisseur(idfournisseur);
+alter table boncommande add column status integer default 0;
+
+-- ----------------------------------------------------
+
+create or replace view v_commandedetail as 
+(select  v_materiel_detail.nommateriel,v_materiel_detail.tva,v_materiel_detail.idnature,v_materiel_detail.nomnature,v_materiel_detail.idunite,v_materiel_detail.nomunite
+ ,detailcommande.* from detailcommande join  v_materiel_detail on
+ v_materiel_detail.idmateriel = detailcommande.idmateriel);
+
+
+
+
+create or replace view v_commandes as
+select boncommande.status,boncommande.total,boncommande.idmodepaiement , boncommande.livraisonpartielle,
+boncommande.validationfinance,boncommande.validationadjoint,boncommande.idglobal,
+fournisseur.*,v_commandedetail.*  from
+ boncommande 
+join v_commandedetail on boncommande.idboncommande = v_commandedetail.idboncommande
+join fournisseur on boncommande.idfournisseur = fournisseur.idfournisseur;
+

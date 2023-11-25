@@ -13,9 +13,11 @@
             <div class="card-body">
             <div class="d-flex flex-row justify-content-between align-items-center mb-3">
                 <h3 class="text-start mb-3">  vos besoins  </h3>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMaterial">
-                Ajouter + 
-                </button>
+                <?php if($status < 1 ){ ?>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMaterial">
+                    Ajouter + 
+                    </button>
+                <?php } ?>
                 <!-- Modal -->
                 <div class="modal fade" id="addMaterial" tabindex="-1" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
@@ -141,13 +143,13 @@
                 <?php 
                  $user = $this->session->userdata('user_data');
                 if($user['privilege'] > 0 ){ ?>
-                <?php if($status < 50 ){ ?>
+                <?php if($status < 1 ){ ?>
                 <form action="<?php echo site_url("index.php/back_office/BesoinController/validBesoinCtrl") ?>" method="POST">
                 <input type="hidden" name="idbesoin" value="<?php echo $idbesoin ?>">
                 <button type="submit" class="btn btn-success"> Valider </button>
                 </form> 
                 
-                <?php }if($status < 75 && $status >= 50  ){ ?>
+                <?php }if($status < 2 && $status >= 1 ){ ?>
                 <form action="<?php echo site_url("index.php/back_office/BesoinController/unvalidBesoinCtrl") ?>" method="POST">
                 <input type="hidden" name="idbesoin" value="<?php echo $idbesoin ?>">
                 <button type="submit" class="btn btn-danger"> Devalider </button>
